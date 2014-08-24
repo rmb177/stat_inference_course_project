@@ -1,0 +1,63 @@
+---
+output: pdf_document
+---
+# Analysis of the Exponential Distribution
+
+### Synopsis
+The purpose of this report is to analyze the exponential distribution. Both the mean and standard deviation of the exponential distribution are 1/lambda, where lambda is the rate parameter. In this report we are using a lambda value of 0.2.
+
+### Data Simulation
+For our simulation, we are going to sample 40 values from the exponential distribution in 1000 simulation runs. The code to run the simulation is as follows:
+
+```{r readInData}
+library(ggplot2)
+
+set.seed(25)
+numSamples = 40
+numSims = 1000
+sampleData <- matrix(rexp(numSamples * numSims, 0.2), ncol = numSamples)
+means <- apply(sampleData, 1, mean)
+variances <- apply(sampleData, 1, var)
+```
+
+Our means vector now contains 1000 values that are the means of 40 exponential distribution samples in each simulation run. 
+
+### Distribution of Sample Means
+Let's first look at the distribution of our sample means. If we plot a histogram of the sample means we see that they are centered around the theoretical mean of five (1 / 0.2). We also plot a normal distribution curve with a mean of five and a stardard deviation of 5/sqrt(40) and see that the distribution of our sample means is approximately normal. We also print out the variance of our sample means and see that it is close to its expected value.
+``` {r plotSampleMeans, echo=FALSE, fig.height=3}
+meanOfMeans <- mean(means)
+df <- as.data.frame(means)
+plot <- ggplot(df, aes(x=means)) 
+plot <- plot + geom_histogram(aes(y=..density..), colour="gray", fill="#daf0dd", binwidth=0.1)
+plot <- plot + stat_function(fun=dnorm, args=list(mean=5, sd=5/sqrt(40)))
+plot <- plot + geom_vline(xintercept = meanOfMeans)
+print(plot)
+
+print(paste("Our sample variance = ", var(means)))
+print(paste("Our expected sample variance =", 25/40))
+```
+
+### Distribution of Sample Variances
+Now let's look at the distribution of sample variances. We run a simulation similar to the above except we use the var function to get sample variances. Our plot again shows that the variance is centered around 25 as it should be (5^2).
+
+``` {r plotSamplVariances, echo=FALSE, fig.height=3}
+df <- as.data.frame(variances)
+plot <- ggplot(df, aes(x=variances)) 
+plot <- plot + geom_histogram(aes(y=..density..), colour="gray", fill="#daf0dd", binwidth=10)
+plot <- plot + geom_vline(xintercept = (1/0.2)^2)
+print(plot)
+```
+
+### Confidence Interval
+Finally we calculate the 95% confidence interval for our sample distribution.
+``` {r confidenceInterval}
+ci <- meanOfMeans + c(-1, 1) * qt(.975, numSamples - 1) * 5 / sqrt(numSamples)
+test <- sapply(means, function(m)
+{
+      ci[1] < m & ci[2] > m  
+})
+ci
+test
+sum(test)
+```
+

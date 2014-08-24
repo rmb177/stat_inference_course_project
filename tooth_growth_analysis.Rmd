@@ -1,0 +1,96 @@
+---
+output: pdf_document
+---
+# Analysis of Vitamin C on Tooth Growth in Guinea Pigs
+
+### Synopsis
+The purpose of this report is to analyze the effects of Vitamin C and delivery methods of the Vitamin C, on tooth growth in guinea pigs. The data set is provied within the datasets package provided by the R programming language. 
+
+### Review of the data
+The dataset contains 60 observations of tooth growth in guinea pigs. The observations are broken into six sets of ten, each set with a unique combination of the level of the dosage in millgrams, the supplement type (VC = ascorbic acid, OJ = orange juice) given to a guinea pig. We are assuming each set of observations contains ten different guinea pigs, which means the data is not paired in any way. We also assume differing variances between each set of observations.
+
+We use some code provided with the data set to plot the data and get a general overview of what the data looks like:
+
+``` {r plotData}
+require(graphics)
+coplot(len ~ dose | supp, data = ToothGrowth, panel = panel.smooth,
+       xlab = "ToothGrowth data: length vs dose, given type of supplement")
+```
+
+A quick look at the data suggests that in both types of dosage, larger levels of Vitamin C result in more tooth growth. Although not as obvious, it appears dosages deliered through orange juice result in larger tooth growth.
+
+### Statistical Analysis
+Because our samples sizes are small, we will perform the statistical anlysis using t-confidence intervals. For each dosage type, we will compare the the dosage pair levels 0.5/1.0 and 1.0/2.0. For each dosage level, we will comare the dosage types. Each test will assume the null hypothesis is that the two samples have the same mean.
+
+### Comparing Dosage Levels
+Using the t.test function provided by R, we create a table that displays the t statistic values when comparing neighboring dosage levels for each dosage type.
+
+``` {r dosage level tests, echo=FALSE}
+vc05 <- ToothGrowth[1:10, 1]
+vc1 <- ToothGrowth[11:20, 1]
+vc2 <- ToothGrowth[21:30, 1]
+oj05 <- ToothGrowth[31:40, 1]
+oj1 <- ToothGrowth[41:50, 1]
+oj2 <- ToothGrowth[51:60, 1]
+
+vc1vs05 <- t.test(vc1, vc05)
+vc2vs1 <- t.test(vc2, vc1)
+oj1vs05 <- t.test(oj1, oj05)
+oj2vs1 <- t.test(oj2, oj1)
+
+dosageLevelTable <- 
+      data.frame(round(c(vc1vs05$statistic, vc2vs1$statistic, oj1vs05$statistic, oj2vs1$statistic), 3),
+                 round(c(vc1vs05$parameter, vc2vs1$parameter, oj1vs05$parameter, oj2vs1$parameter), 3),
+                 c(vc1vs05$p.value, vc2vs1$p.value, oj1vs05$p.value, oj2vs1$p.value),
+                 c(toString(round(vc1vs05$conf.int, 3)), 
+                   toString(round(vc2vs1$conf.int, 3)), 
+                   toString(round(oj1vs05$conf.int, 3)), 
+                   toString(round(oj2vs1$conf.int, 3))),
+                 c(toString(round(vc1vs05$estimate, 3)),
+                   toString(round(vc2vs1$estimate, 3)),
+                   toString(round(oj1vs05$estimate, 3)),
+                   toString(round(oj2vs1$estimate, 3))))
+                
+                 
+colnames(dosageLevelTable) <- c("t", "df", "p-value", "conf interval", "sample estimates")
+rownames(dosageLevelTable) <- c("VC 1.0 vs 0.5:  ", "VC 2.0 vs 1.0:  ", "OJ 1.0 vs 0.5:  ", "OJ 2.0 vs 1.0:  ")
+
+dosageLevelTable
+```
+
+The data provides pretty strong evidence that our initial assumption is correct. For both dosage types, increasing the dosage results in larger tooth growth.
+
+### Comparing Dosage Levels
+We now perform the same type of tests, except this time we are comparing dosage type across matching dosage levels.
+
+``` {r dosage type tests, echo=FALSE}
+
+ojVsVc05 <- t.test(oj05, vc05)
+ojVsVc1 <- t.test(oj1, vc1)
+ojVsVc2 <- t.test(oj2, vc2)
+
+dosageTypeTable <- 
+      data.frame(round(c(ojVsVc05$statistic, ojVsVc1$statistic, ojVsVc2$statistic), 3),
+                 round(c(ojVsVc05$parameter, ojVsVc1$parameter, ojVsVc2$parameter), 3),
+                 c(ojVsVc05$p.value, ojVsVc1$p.value, ojVsVc2$p.value),
+                 c(toString(round(ojVsVc05$conf.int, 3)), 
+                   toString(round(ojVsVc1$conf.int, 3)), 
+                   toString(round(ojVsVc2$conf.int, 3))),
+                 c(toString(round(ojVsVc05$estimate, 3)),
+                   toString(round(ojVsVc1$estimate, 3)),
+                   toString(round(ojVsVc2$estimate, 3))))
+
+                
+                 
+colnames(dosageTypeTable) <- c("t", "df", "p-value", "conf interval", "sample estimates")
+rownames(dosageTypeTable) <- c("0.5 OJ vs VC:  ", "1.0 OJ vs VC:  ", "2.0 OJ vs VC:  ")
+
+dosageTypeTable
+```
+
+In this case, we see that there is strong evidence that larger tooth growth occurs for the OJ dosage type with 0.5 or 1 mg dosages compared to the VC dosage type. However, for dosage levels of 2 mg, we cannot say that there is any difference in tooth growth between the two types of dosages.
+
+### Summary
+In summary, our tests show that higher dosage levels of Vitamin C result in larger tooth growth among guinea pigs. However, larger tooth growth is only affected by the dosage type at the lower levels of dosage.
+
+

@@ -4,12 +4,12 @@ output: pdf_document
 # Analysis of Vitamin C on Tooth Growth in Guinea Pigs
 
 ### Synopsis
-The purpose of this report is to analyze the effects of Vitamin C and delivery methods of the Vitamin C, on tooth growth in guinea pigs. The data set is provied within the datasets package provided by the R programming language. 
+The purpose of this report is to analyze the effects of Vitamin C and delivery methods of Vitamin C on tooth growth in guinea pigs. The data set is provided within the datasets package provided by the R programming language.
 
 ### Review of the data
-The dataset contains 60 observations of tooth growth in guinea pigs. The observations are broken into six sets of ten, each set with a unique combination of the level of the dosage in millgrams, the supplement type (VC = ascorbic acid, OJ = orange juice) given to a guinea pig. We are assuming each set of observations contains ten different guinea pigs, which means the data is not paired in any way. We also assume differing variances between each set of observations.
+The dataset contains 60 observations of tooth growth in guinea pigs. The observations are broken into six sets of ten, each set with a unique combination of dosage level (in milligrams) and supplement type (VC = ascorbic acid, OJ = orange juice). We are assuming each set of observations contains ten different guinea pigs, which means the data is not paired in any way. We also assume differing variances between each set of observations.
 
-We use some code provided with the data set to plot the data and get a general overview of what the data looks like:
+Using code provided with the help contents for the guinea pig data set, we plot the data and get a general overview of what it looks like:
 
 ``` {r plotData}
 require(graphics)
@@ -17,10 +17,14 @@ coplot(len ~ dose | supp, data = ToothGrowth, panel = panel.smooth,
        xlab = "ToothGrowth data: length vs dose, given type of supplement")
 ```
 
-A quick look at the data suggests that in both types of dosage, larger levels of Vitamin C result in more tooth growth. Although not as obvious, it appears dosages deliered through orange juice result in larger tooth growth.
+A quick look at the data suggests that in both dosage types, larger levels of Vitamin C result in more tooth growth. Although not as obvious, it appears dosages delivered through orange juice may result in larger tooth growth.
 
 ### Statistical Analysis
-Because our samples sizes are small, we will perform the statistical anlysis using t-confidence intervals. For each dosage type, we will compare the the dosage pair levels 0.5/1.0 and 1.0/2.0. For each dosage level, we will comare the dosage types. Each test will assume the null hypothesis is that the two samples have the same mean.
+Because our samples sizes are small, we will perform the statistical analysis using t-confidence intervals. For each dosage type we will compare the the dosage pair levels 0.5/1.0 and 1.0/2.0. We assume that 2.0 > 0.5 will transitively be true if the data shows that 1.0 > 0.5 and 2.0 > 1.0,  
+
+We will also analyze whether dosage types make a difference in tooth growth. For each dosage level we will compare across the two dosage types. 
+
+Each analysis will use a null hypothesis that the two two samples have the same mean.
 
 ### Comparing Dosage Levels
 Using the t.test function provided by R, we create a table that displays the t statistic values when comparing neighboring dosage levels for each dosage type.
@@ -88,9 +92,11 @@ rownames(dosageTypeTable) <- c("0.5 OJ vs VC:  ", "1.0 OJ vs VC:  ", "2.0 OJ vs 
 dosageTypeTable
 ```
 
-In this case, we see that there is strong evidence that larger tooth growth occurs for the OJ dosage type with 0.5 or 1 mg dosages compared to the VC dosage type. However, for dosage levels of 2 mg, we cannot say that there is any difference in tooth growth between the two types of dosages.
+In this case, we see that there is strong evidence that larger tooth growth occurs for the OJ dosage type with 0.5 or 1 mg dosages compared to the VC dosage type. However, for dosage levels of 2 mg, we cannot say that there is any statistical difference in tooth growth between the two dosage types.
 
 ### Summary
-In summary, our tests show that higher dosage levels of Vitamin C result in larger tooth growth among guinea pigs. However, larger tooth growth is only affected by the dosage type at the lower levels of dosage.
+In summary, our tests show that higher dosage levels of Vitamin C result in larger tooth growth among guinea pigs. However, larger tooth growth is only affected by dosage type at the lower levels of dosage.
 
-
+### Complete Rmd File
+The complete Rmd file for this report can be found at the following url:
+    [tooth_growth_analysis.Rmd](https://github.com/rmb177/stat_inference_course_project/blob/master/tooth_growth_analysis.Rmd)

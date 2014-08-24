@@ -25,7 +25,7 @@ variances <- apply(sampleData, 1, var)
 The means vector now contains 1000 values that are the means of 40 exponential distribution samples in each simulation run. The variances vector contains the variance of each simulation run. 
 
 ### Distribution of Sample Means
-Let's first look at the distribution of our sample means. If we plot a histogram of the sample means we see that they are centered around the theoretical mean of 1/lambda (5). We also plot a normal distribution curve with a mean of 1/lambda and a stardard deviation of (1/lambda)/sqrt(40) and see that the distribution of our sample means is approximately normal. We also print out the variance of our sample means and see that it is close to its expected value (1/labmda)^2/40.
+Let's first look at the distribution of our sample means. If we plot a histogram of the sample means we see that they are centered around the theoretical mean of 1/lambda (5). We also plot a normal distribution curve with a mean of 1/lambda and a standard deviation of (1/lambda)/sqrt(40) and see that the distribution of our sample means is approximately normal. We also print out the variance of our sample means and see that it is close to its expected value (1/labmda)^2/40.
 ``` {r plotSampleMeans, echo=FALSE, fig.height=2.8}
 meanOfMeans <- mean(means)
 df <- as.data.frame(means)
